@@ -1,0 +1,5 @@
+{
+  "name": "Copy of TravelOrchestra",
+  "description": "A multi-agent travel planning system driven by natural language. It orchestrates Weather, Transport, Route, Attraction, and Food agents to generate comprehensive itineraries.",
+  "requestFramePermissions": []
+}
