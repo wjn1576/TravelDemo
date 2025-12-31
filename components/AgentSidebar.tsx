@@ -2,12 +2,12 @@ import React from 'react';
 import { AgentType } from '../types';
 import { 
   CloudSun, 
-  TrainFront, 
-  MapPinned, 
-  Ticket, 
-  Utensils, 
-  Bot, 
-  Cpu
+  MapPin, 
+  Sparkles, 
+  Heart, 
+  UtensilsCrossed, 
+  Plane,
+  Gift
 } from 'lucide-react';
 
 interface AgentSidebarProps {
@@ -16,80 +16,51 @@ interface AgentSidebarProps {
 }
 
 const AGENT_CONFIG = [
-  { type: AgentType.ORCHESTRATOR, label: 'Orchestrator', subLabel: '总控调度', icon: Bot, color: 'text-indigo-400', bg: 'bg-indigo-500/10' },
-  { type: AgentType.WEATHER, label: 'Weather', subLabel: '气象服务', icon: CloudSun, color: 'text-sky-400', bg: 'bg-sky-500/10' },
-  { type: AgentType.TRANSPORT, label: 'Transport', subLabel: '票务交通', icon: TrainFront, color: 'text-blue-400', bg: 'bg-blue-500/10' },
-  { type: AgentType.ROUTE, label: 'Route', subLabel: '路线规划', icon: MapPinned, color: 'text-emerald-400', bg: 'bg-emerald-500/10' },
-  { type: AgentType.ATTRACTION, label: 'Attraction', subLabel: '景点向导', icon: Ticket, color: 'text-purple-400', bg: 'bg-purple-500/10' },
-  { type: AgentType.FOOD, label: 'Food', subLabel: '本地美食', icon: Utensils, color: 'text-orange-400', bg: 'bg-orange-500/10' },
+  { type: AgentType.ORCHESTRATOR, label: '浪漫管家', subLabel: '用心筹备', icon: Sparkles, color: 'text-rose-500', bg: 'bg-rose-50', glow: 'shadow-rose-200' },
+  { type: AgentType.WEATHER, label: '晴雨守护', subLabel: '温暖每一天', icon: CloudSun, color: 'text-orange-400', bg: 'bg-orange-50', glow: 'shadow-orange-200' },
+  { type: AgentType.TRANSPORT, label: '奔赴于你', subLabel: '山海皆可平', icon: Plane, color: 'text-sky-400', bg: 'bg-sky-50', glow: 'shadow-sky-200' },
+  { type: AgentType.ROUTE, label: '漫步余生', subLabel: '轨迹皆是你', icon: MapPin, color: 'text-emerald-400', bg: 'bg-emerald-50', glow: 'shadow-emerald-200' },
+  { type: AgentType.ATTRACTION, label: '此间风景', subLabel: '因你而绚烂', icon: Gift, color: 'text-purple-400', bg: 'bg-purple-50', glow: 'shadow-purple-200' },
+  { type: AgentType.FOOD, label: '烟火人间', subLabel: '尝遍世间味', icon: UtensilsCrossed, color: 'text-pink-400', bg: 'bg-pink-50', glow: 'shadow-pink-200' },
 ];
 
 export const AgentSidebar: React.FC<AgentSidebarProps> = ({ activeAgents, isProcessing }) => {
   return (
-    <div className="w-64 bg-slate-900 h-full flex flex-col border-r border-slate-800 text-slate-300 flex-none hidden md:flex">
-      <div className="p-6 border-b border-slate-800 flex items-center gap-3">
-        <div className="p-2 bg-indigo-600 rounded-lg shadow-lg shadow-indigo-500/30">
-          <Cpu className="w-5 h-5 text-white" />
+    <div className="w-64 bg-white/80 h-full flex flex-col border-r border-rose-100 flex-none hidden md:flex z-20 backdrop-blur-lg">
+      <div className="p-8 border-b border-rose-100 text-center">
+        <div className="inline-flex p-3 bg-rose-500 rounded-full shadow-lg shadow-rose-200 mb-4 animate-soft-glow">
+          <Heart className="w-6 h-6 text-white fill-white" />
         </div>
-        <div>
-          <h1 className="font-bold text-white tracking-tight">TravelOrchestra</h1>
-          <p className="text-[10px] text-slate-500 uppercase tracking-widest font-semibold mt-0.5">Multi-Agent System</p>
-        </div>
+        <h1 className="font-romantic text-2xl text-rose-600 tracking-wide">情书与足迹</h1>
+        <p className="text-[10px] text-rose-300 uppercase tracking-widest mt-1">专属你的春节旅行</p>
       </div>
 
-      <div className="flex-1 p-4 space-y-2 overflow-y-auto">
-        <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-4 px-2">Active Agents</div>
-        
+      <div className="flex-1 p-4 space-y-4 overflow-y-auto">
         {AGENT_CONFIG.map((agent) => {
           const isActive = activeAgents.includes(agent.type);
-          const isOrchestrator = agent.type === AgentType.ORCHESTRATOR;
-          
-          // Special animation state for Orchestrator when processing
-          const isPulsing = isOrchestrator && isProcessing;
-
           return (
             <div 
               key={agent.type}
               className={`
-                relative flex items-center gap-3 p-3 rounded-xl border transition-all duration-500 ease-out
-                ${isActive || isPulsing
-                  ? 'bg-slate-800 border-slate-700 shadow-[0_0_20px_rgba(0,0,0,0.3)] translate-x-1' 
-                  : 'bg-transparent border-transparent opacity-40 grayscale hover:opacity-60'}
+                group flex items-center gap-4 p-4 rounded-2xl transition-all duration-500
+                ${isActive ? `bg-white shadow-xl ${agent.glow} translate-x-2` : 'opacity-40 grayscale hover:opacity-100 hover:grayscale-0'}
               `}
             >
-              {/* Glowing Indicator Line */}
-              <div className={`absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 rounded-r-full transition-all duration-500
-                ${isActive || isPulsing ? `bg-current ${agent.color} shadow-[0_0_10px_currentColor]` : 'bg-transparent w-0'}
-              `} />
-
-              <div className={`p-2 rounded-lg transition-colors duration-300 ${isActive ? agent.bg : 'bg-slate-800'}`}>
-                <agent.icon className={`w-5 h-5 transition-colors duration-300 ${isActive || isPulsing ? agent.color : 'text-slate-500'}`} />
+              <div className={`p-2.5 rounded-xl transition-all duration-300 ${isActive ? agent.bg : 'bg-slate-100'}`}>
+                <agent.icon className={`w-5 h-5 ${isActive ? agent.color : 'text-slate-400'}`} />
               </div>
-              
-              <div className="flex-1">
-                <div className={`font-medium text-sm transition-colors duration-300 ${isActive || isPulsing ? 'text-white' : 'text-slate-500'}`}>
-                  {agent.label}
-                </div>
-                <div className="text-xs text-slate-500">
-                  {agent.subLabel}
-                </div>
+              <div>
+                <div className={`text-sm font-bold ${isActive ? 'text-slate-800' : 'text-slate-400'}`}>{agent.label}</div>
+                <div className="text-[10px] text-slate-400">{agent.subLabel}</div>
               </div>
-
-              {/* Status Dot */}
-              <div className={`w-2 h-2 rounded-full transition-all duration-500 
-                ${isPulsing ? 'bg-indigo-400 animate-ping' : ''}
-                ${isActive && !isPulsing ? 'bg-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.6)]' : ''}
-                ${!isActive && !isPulsing ? 'bg-slate-700' : ''}
-              `} />
             </div>
           );
         })}
       </div>
 
-      <div className="p-4 border-t border-slate-800">
-        <div className="bg-slate-800/50 rounded-lg p-3 text-xs text-slate-500 leading-relaxed">
-          <span className="text-indigo-400 font-medium">系统状态:</span> 
-          {isProcessing ? ' 正在协调多个智能体并行计算...' : ' 待机中，等待用户指令。'}
+      <div className="p-6 border-t border-rose-50 bg-rose-50/30">
+        <div className="text-[10px] text-rose-400 text-center font-medium">
+          {isProcessing ? "正在为你编织浪漫行程..." : "陪伴是最长情的告白 ❤️"}
         </div>
       </div>
     </div>

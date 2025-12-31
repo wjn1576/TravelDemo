@@ -1,6 +1,6 @@
 import React from 'react';
-import { TravelItinerary, DayPlan, TravelActivity } from '../types';
-import { Calendar, MapPin, Clock, DollarSign, Cloud, Utensils, Camera, Car } from 'lucide-react';
+import { TravelItinerary } from '../types';
+import { Calendar, MapPin, Clock, DollarSign, Cloud, Utensils, Camera, Car, Heart } from 'lucide-react';
 
 interface ItineraryViewProps {
   itinerary: TravelItinerary;
@@ -8,75 +8,56 @@ interface ItineraryViewProps {
 
 const ActivityIcon = ({ type }: { type: string }) => {
   switch (type) {
-    case 'food': return <Utensils className="w-4 h-4 text-orange-500" />;
-    case 'attraction': return <Camera className="w-4 h-4 text-purple-500" />;
-    case 'transport': return <Car className="w-4 h-4 text-blue-500" />;
-    default: return <Clock className="w-4 h-4 text-slate-400" />;
+    case 'food': return <Utensils className="w-4 h-4 text-rose-400" />;
+    case 'attraction': return <Camera className="w-4 h-4 text-rose-400" />;
+    case 'transport': return <Car className="w-4 h-4 text-rose-400" />;
+    default: return <Clock className="w-4 h-4 text-rose-400" />;
   }
 };
 
 export const ItineraryView: React.FC<ItineraryViewProps> = ({ itinerary }) => {
-  if (!itinerary || !itinerary.days || itinerary.days.length === 0) return null;
+  if (!itinerary || !itinerary.days) return null;
 
   return (
-    <div className="w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden animate-in zoom-in-95 duration-500">
-      {/* Header */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-600 p-6 text-white">
-        <h2 className="text-2xl font-bold mb-2">{itinerary.tripTitle}</h2>
-        <div className="flex flex-wrap gap-4 text-sm opacity-90">
-          <div className="flex items-center gap-1">
-            <MapPin className="w-4 h-4" /> {itinerary.destination}
-          </div>
-          <div className="flex items-center gap-1">
-            <Calendar className="w-4 h-4" /> {itinerary.duration}
-          </div>
-          <div className="flex items-center gap-1">
-            <DollarSign className="w-4 h-4" /> 预估预算: {itinerary.totalBudgetEstimate}
-          </div>
+    <div className="w-full glass-romantic rounded-3xl overflow-hidden animate-love-in border-2 border-rose-100/50">
+      <div className="bg-gradient-to-br from-rose-500 to-pink-600 p-8 text-white relative">
+        <div className="absolute top-4 right-6 opacity-20"><Heart className="w-20 h-20 fill-white" /></div>
+        <h2 className="text-3xl font-romantic mb-3 relative z-10">{itinerary.tripTitle}</h2>
+        <div className="flex flex-wrap gap-4 text-sm relative z-10">
+          <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-2"><MapPin size={14}/>{itinerary.destination}</span>
+          <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-2"><Calendar size={14}/>{itinerary.duration}</span>
+          <span className="bg-white/20 backdrop-blur-md px-3 py-1 rounded-full flex items-center gap-2"><DollarSign size={14}/>{itinerary.totalBudgetEstimate}</span>
         </div>
       </div>
 
-      {/* Days */}
-      <div className="p-6 space-y-8">
+      <div className="p-8 space-y-10">
         {itinerary.days.map((day, idx) => (
-          <div key={idx} className="relative pl-8 border-l-2 border-slate-200 last:border-0 pb-8 last:pb-0">
-            {/* Timeline Dot */}
-            <div className="absolute -left-[9px] top-0 w-4 h-4 rounded-full bg-blue-500 border-4 border-white shadow-sm" />
+          <div key={idx} className="relative pl-10 border-l-2 border-rose-100 last:border-0 pb-10 last:pb-0 animate-timeline-slide" style={{animationDelay: `${idx*100}ms`}}>
+            <div className="absolute -left-[11px] top-0 w-5 h-5 rounded-full bg-rose-500 border-4 border-white shadow-lg z-10" />
             
-            {/* Day Header */}
-            <div className="mb-4">
-              <h3 className="text-lg font-bold text-slate-800 flex items-center gap-2">
-                Day {idx + 1} <span className="text-sm font-normal text-slate-500">({day.date})</span>
+            <div className="mb-6">
+              <h3 className="text-xl font-bold text-rose-800 flex items-center gap-3">
+                第 {idx + 1} 天 <span className="text-sm font-normal text-rose-400 font-mono-tech italic">({day.date})</span>
               </h3>
-              <div className="flex items-center gap-2 text-sm text-slate-600 mt-1">
-                <Cloud className="w-4 h-4 text-blue-400" />
-                <span>{day.weather}</span>
-                <span className="mx-1">•</span>
-                <span>{day.summary}</span>
-              </div>
+              <p className="text-slate-500 mt-2 text-sm leading-relaxed flex items-center gap-2">
+                <Cloud size={16} className="text-sky-400" /> {day.weather} | {day.summary}
+              </p>
             </div>
 
-            {/* Activities Card Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              {day.activities.map((activity, actIdx) => (
-                <div key={actIdx} className="bg-slate-50 hover:bg-slate-100 transition-colors p-3 rounded-lg border border-slate-200 flex gap-3">
-                  <div className="mt-1">
-                    <ActivityIcon type={activity.type} />
-                  </div>
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start">
-                      <h4 className="font-semibold text-slate-800 text-sm">{activity.title}</h4>
-                      <span className="text-xs font-mono text-slate-500 bg-white px-1.5 py-0.5 rounded border border-slate-200">
-                        {activity.time}
-                      </span>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {day.activities.map((act, i) => (
+                <div key={i} className="bg-white/60 hover:bg-white p-4 rounded-2xl border border-rose-50 transition-all hover:shadow-xl hover:-translate-y-1 group">
+                  <div className="flex gap-4">
+                    <div className="p-3 bg-rose-50 rounded-xl group-hover:bg-rose-500 group-hover:text-white transition-colors">
+                      <ActivityIcon type={act.type} />
                     </div>
-                    <p className="text-xs text-slate-600 mt-1 leading-relaxed line-clamp-2">{activity.description}</p>
-                    {(activity.location || activity.cost) && (
-                      <div className="flex gap-3 mt-2 text-xs text-slate-400">
-                        {activity.location && <span>📍 {activity.location}</span>}
-                        {activity.cost && <span>💰 {activity.cost}</span>}
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center mb-1">
+                        <span className="font-bold text-slate-800 text-sm">{act.title}</span>
+                        <span className="text-[10px] font-mono-tech bg-rose-50 px-2 py-1 rounded text-rose-400">{act.time}</span>
                       </div>
-                    )}
+                      <p className="text-xs text-slate-500 line-clamp-2">{act.description}</p>
+                    </div>
                   </div>
                 </div>
               ))}

@@ -1,18 +1,3 @@
-export enum AgentType {
-  ORCHESTRATOR = 'Orchestrator',
-  WEATHER = 'Weather',
-  TRANSPORT = 'Transport',
-  ROUTE = 'Route',
-  ATTRACTION = 'Attraction',
-  FOOD = 'Food',
-}
-
-export interface AgentLog {
-  agent: AgentType;
-  status: 'pending' | 'working' | 'completed' | 'failed';
-  message: string;
-  details?: string;
-}
 
 export interface TravelActivity {
   time: string;
@@ -38,14 +23,36 @@ export interface TravelItinerary {
   days: DayPlan[];
 }
 
-// New types for intent handling
-export type ResponseType = 'CHAT' | 'SPECIFIC' | 'PLAN';
+/**
+ * Defines the various types of specialized agents in the orchestration system
+ */
+export enum AgentType {
+  WEATHER = 'WEATHER',
+  TRANSPORT = 'TRANSPORT',
+  ROUTE = 'ROUTE',
+  ATTRACTION = 'ATTRACTION',
+  FOOD = 'FOOD',
+  ORCHESTRATOR = 'ORCHESTRATOR',
+}
 
+/**
+ * Structure for agent activity logs displayed in the UI
+ */
+export interface AgentLog {
+  agent: AgentType;
+  status: 'working' | 'completed' | 'error' | string;
+  message: string;
+  details?: string;
+}
+
+/**
+ * The structured response returned by the planning orchestrator
+ */
 export interface OrchestratorResponse {
-  responseType: ResponseType;
-  replyText: string; // The natural language conversational reply
+  responseType: string;
+  replyText: string;
   logs: AgentLog[];
-  itinerary?: TravelItinerary; // Optional, only present if type is PLAN
+  itinerary?: TravelItinerary;
 }
 
 export interface Message {
@@ -53,16 +60,12 @@ export interface Message {
   role: 'user' | 'assistant';
   content: string;
   relatedItinerary?: TravelItinerary;
-  agentLogs?: AgentLog[];
 }
-
-export type ModelProvider = 'gemini' | 'openai-compatible';
 
 export interface ModelConfig {
   id: string;
   name: string;
-  provider: ModelProvider;
+  provider: 'gemini';
   modelId: string;
-  baseUrl?: string;
   apiKey?: string;
 }
