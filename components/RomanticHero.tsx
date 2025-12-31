@@ -12,6 +12,18 @@ const WISHES = [
 
 const COLORS = ['#fff0f5', '#ffe4e1', '#ffb7c5', '#ffffff'];
 
+const KITTY_ASSETS = [
+  "https://i.postimg.cc/XqtZTgJK/2.png",
+  "https://i.postimg.cc/BbR8dC6T/3.png",
+  "https://i.postimg.cc/j2BWGh5y/4.png",
+  "https://i.postimg.cc/Rh23jTFK/5.png",
+  "https://i.postimg.cc/D0RWtcZx/6.png",
+  "https://i.postimg.cc/ZnX91LRX/7.png",
+  "https://i.postimg.cc/T1ByZcwS/8.png",
+  "https://i.postimg.cc/SRHXwGsw/9.png",
+  "https://i.postimg.cc/QCvBRqCL/e1.png"
+];
+
 const KittyBow = ({ className, style }: { className?: string, style?: React.CSSProperties }) => (
   <svg viewBox="0 0 100 60" className={className} style={style} fill="currentColor">
     <path d="M50 25c-5-8-20-15-35-5S5 55 25 55s20-10 25-20c5 10 5 20 25 20s25-25 10-35-30 3-35 5z" />
@@ -40,9 +52,18 @@ export const RomanticHero: React.FC<{ onComplete?: () => void }> = ({ onComplete
     let w = canvas.width = window.innerWidth;
     let h = canvas.height = window.innerHeight;
     
+    // Preload Kitty Images
+    const loadedKittyImages: HTMLImageElement[] = [];
+    KITTY_ASSETS.forEach(src => {
+      const img = new Image();
+      img.src = src;
+      loadedKittyImages.push(img);
+    });
+    
     const CARD_COUNT = 80; 
     const DUST_COUNT = 100; // 魔法尘埃
     const STREAM_COUNT = 40; // 流光
+    const KITTY_COUNT = 15; // Kitty 装饰数量
     const HEART_SCALE = Math.min(w, h) / 45;
     const ANIMATION_DURATION = 2500; 
 
@@ -119,7 +140,57 @@ export const RomanticHero: React.FC<{ onComplete?: () => void }> = ({ onComplete
       }
     }
 
-    // --- 3. 主体卡片粒子 ---
+    // --- 3. Kitty 装饰粒子 (新增) ---
+    class KittyParticle {
+        x: number;
+        y: number;
+        speed: number;
+        size: number;
+        img: HTMLImageElement;
+        angle: number;
+        wobbleSpeed: number;
+        opacity: number;
+  
+        constructor() {
+          this.reset(true);
+        }
+  
+        reset(initial: boolean = false) {
+          this.x = Math.random() * w;
+          this.y = initial ? Math.random() * h : h + 100 + Math.random() * 200;
+          this.speed = 0.2 + Math.random() * 0.5; // Very slow float
+          this.size = 30 + Math.random() * 40; // Random size
+          this.img = loadedKittyImages[Math.floor(Math.random() * loadedKittyImages.length)];
+          this.angle = (Math.random() - 0.5) * 0.5;
+          this.wobbleSpeed = 0.01 + Math.random() * 0.02;
+          this.opacity = 0.4 + Math.random() * 0.4;
+        }
+  
+        update() {
+          this.y -= this.speed;
+          // Simple wobble
+          this.angle = Math.sin(this.y * 0.02) * 0.15;
+          this.x += Math.sin(this.y * 0.01) * 0.3;
+  
+          if (this.y < -100) {
+            this.reset();
+          }
+        }
+  
+        draw() {
+          if (!ctx || !this.img.complete) return;
+          ctx.save();
+          ctx.translate(this.x, this.y);
+          ctx.rotate(this.angle);
+          ctx.globalAlpha = this.opacity;
+          try {
+             ctx.drawImage(this.img, -this.size / 2, -this.size / 2, this.size, this.size);
+          } catch(e) {}
+          ctx.restore();
+        }
+      }
+
+    // --- 4. 主体卡片粒子 ---
     class CardParticle {
       x: number; y: number;
       startX: number; startY: number;
@@ -229,6 +300,9 @@ export const RomanticHero: React.FC<{ onComplete?: () => void }> = ({ onComplete
 
     const streamParticles: StreamParticle[] = [];
     for(let i=0; i<STREAM_COUNT; i++) streamParticles.push(new StreamParticle());
+    
+    const kittyParticles: KittyParticle[] = [];
+    for(let i=0; i<KITTY_COUNT; i++) kittyParticles.push(new KittyParticle());
 
     const cardParticles: CardParticle[] = [];
     for (let i = 0; i < CARD_COUNT; i++) {
@@ -260,8 +334,11 @@ export const RomanticHero: React.FC<{ onComplete?: () => void }> = ({ onComplete
       // 1. 绘制梦幻背景
       streamParticles.forEach(p => { p.update(); p.draw(); });
       magicDusts.forEach(p => { p.update(); p.draw(); });
+      
+      // 2. 绘制 Kitty 装饰 (新层级，位于背景和文字卡片之间)
+      kittyParticles.forEach(p => { p.update(); p.draw(); });
 
-      // 2. 绘制前景卡片
+      // 3. 绘制前景卡片
       cardParticles.forEach(p => { p.update(now, appStartTime); p.draw(); });
 
       if (!isFinished && (now - appStartTime) > 4500) {

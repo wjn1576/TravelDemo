@@ -1,5 +1,4 @@
 import React from 'react';
-import { Heart } from 'lucide-react';
 
 // ============================================================================
 // 📷 你的专属回忆相册
@@ -14,9 +13,9 @@ const MEMORIES = [
 ];
 
 const TITLES = [
-  "爱你", "", "", "", 
-  "", "可爱捏", "", "",
-  "", ""
+  "爱你", "", "幸福", "可爱捏", 
+  "", "", "", "",
+  "", "未完待续"
 ];
 
 const KittyBow = ({ className }: { className?: string }) => (
@@ -26,23 +25,43 @@ const KittyBow = ({ className }: { className?: string }) => (
   </svg>
 );
 
-// 像素风 Kitty 头部 (模仿你照片里的贴纸)
-const PixelKitty = ({ className }: { className?: string }) => (
-  <img 
-    src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Hello_Kitty_logo.svg/2560px-Hello_Kitty_logo.svg.png" 
-    className={`drop-shadow-md filter contrast-125 ${className}`}
-    alt="Pixel Kitty"
-  />
-);
+// 复合贴纸组件（同 App.tsx）
+const CompositeSticker = ({ type, className }: { type: 'bear' | 'ok', className?: string }) => {
+    const baseImg = "https://upload.wikimedia.org/wikipedia/en/0/05/Hello_kitty_character_portrait.png";
+    return (
+      <div className={`relative inline-block ${className}`}>
+        <img 
+            src={baseImg} 
+            alt="Sticker" 
+            className="w-full h-full object-contain drop-shadow-md"
+        />
+        {type === 'bear' && <span className="absolute -top-1/3 left-0 text-[3rem] animate-bounce">🐻</span>}
+        {type === 'ok' && <span className="absolute -top-1/4 -right-1/4 text-[2.5rem] font-bold text-rose-500 rotate-12 font-romantic">OK!</span>}
+      </div>
+    );
+};
 
 export const MemoryGallery: React.FC = () => {
   return (
-    <div className="w-full max-w-7xl mx-auto py-16 px-8 pb-40"> {/* 增加底部 padding 防止被按钮遮挡 */}
+    <div className="w-full max-w-7xl mx-auto py-16 px-8 pb-40 relative"> 
+      {/* 增加背景大贴纸装饰 - 使用可靠的 Logo */}
+      <img 
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Hello_Kitty_logo.svg/512px-Hello_Kitty_logo.svg.png" 
+        className="absolute top-20 -left-10 w-48 opacity-5 rotate-12 pointer-events-none hidden md:block" 
+        alt="Decor Logo"
+      />
+       <img 
+        src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/9b/Hello_Kitty_bow.svg/1200px-Hello_Kitty_bow.svg.png" 
+        className="absolute bottom-40 -right-10 w-40 opacity-5 -rotate-12 pointer-events-none hidden md:block" 
+        alt="Decor Bow"
+      />
+
       <div className="flex items-center gap-10 mb-24 justify-center">
         <div className="h-1 bg-gradient-to-r from-transparent via-rose-200 to-transparent flex-1"></div>
-        <div className="text-center px-6 relative">
-          <KittyBow className="absolute -top-12 left-1/2 -translate-x-1/2 w-16 h-16 text-[#E60012] opacity-80" />
-          <h2 className="text-5xl font-romantic text-rose-500 flex items-center justify-center gap-6">
+        <div className="text-center px-6 relative group">
+          <KittyBow className="absolute -top-12 left-1/2 -translate-x-1/2 w-16 h-16 text-[#E60012] opacity-80 group-hover:scale-110 transition-transform" />
+          
+          <h2 className="text-5xl font-romantic text-rose-500 flex items-center justify-center gap-6 relative z-10">
             乐乐
           </h2>
           <p className="text-rose-300 text-[10px] tracking-[0.8em] uppercase font-black mt-2">Fragments of Life</p>
@@ -50,14 +69,11 @@ export const MemoryGallery: React.FC = () => {
         <div className="h-1 bg-gradient-to-r from-transparent via-rose-200 to-transparent flex-1"></div>
       </div>
       
-      {/* 调整布局：columns-2 (手机) -> md:columns-3 (电脑) 
-          对于5张照片，3列布局会形成 2-2-1 的错落感，比单行5张更好看 */}
       <div className="columns-2 md:columns-3 gap-8 space-y-12">
         {MEMORIES.map((url, idx) => {
-          // 随机旋转角度，制造拍立得随意散落的感觉
           const rotation = (idx % 2 === 0 ? 1 : -1) * ((idx * 2 % 5) + 2);
           const hasBow = idx % 2 === 0; 
-          const isFirst = idx === 0; // 第一张照片特殊处理
+          const isFirst = idx === 0; 
           
           return (
             <div 
@@ -69,14 +85,10 @@ export const MemoryGallery: React.FC = () => {
                 className="polaroid-kitty group relative cursor-pointer"
                 style={{ transform: `rotate(${rotation}deg)` }}
               >
-                {/* 第一张照片加特殊的像素Kitty装饰，还原你的照片风格 */}
+                {/* 第一张照片: 模仿 "Kitty Bear OK" 贴纸风格 */}
                 {isFirst && (
-                  <div className="absolute -top-6 -left-6 z-20 animate-bounce delay-700">
-                    <img 
-                      src="https://pngimg.com/uploads/hello_kitty/hello_kitty_PNG32.png" 
-                      className="w-16 h-16 object-contain drop-shadow-lg -rotate-12"
-                      alt="Sticker"
-                    />
+                  <div className="absolute -top-12 -left-8 z-20 animate-bounce delay-700">
+                    <CompositeSticker type="bear" className="w-24 h-24 -rotate-12" />
                   </div>
                 )}
 
@@ -90,7 +102,6 @@ export const MemoryGallery: React.FC = () => {
                     className="w-full h-full object-cover transition-all duration-1000 group-hover:scale-110"
                     loading="lazy"
                   />
-                  {/* 第一张照片加一点粉色爱心滤镜感 */}
                   {isFirst && <div className="absolute inset-0 bg-rose-200/10 pointer-events-none mix-blend-overlay"></div>}
                 </div>
                 <div className="pt-8 pb-4 text-center">

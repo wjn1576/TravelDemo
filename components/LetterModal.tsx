@@ -6,8 +6,20 @@ interface LetterModalProps {
   onClose: () => void;
 }
 
+// 复合贴纸组件：打电话
+const PhoneKittySticker = ({ className }: { className?: string }) => {
+    const baseImg = "https://upload.wikimedia.org/wikipedia/en/0/05/Hello_kitty_character_portrait.png";
+    return (
+      <div className={`relative inline-block ${className} select-none`}>
+         <img src={baseImg} className="w-full h-full object-contain drop-shadow-xl" alt="Kitty" />
+         <span className="absolute bottom-0 -left-2 text-[3rem] z-20 rotate-[135deg] drop-shadow-sm">📞</span>
+         <span className="absolute top-0 right-0 text-[1.5rem] animate-pulse">💬</span>
+      </div>
+    );
+};
+
 const HelloKittySticker = ({ src, className }: { src: string, className: string }) => (
-  <img src={src} className={`absolute drop-shadow-md select-none pointer-events-none ${className}`} alt="decoration" />
+  <img src={src} className={`absolute drop-shadow-md select-none pointer-events-none transition-transform hover:scale-110 duration-300 ${className}`} alt="decoration" />
 );
 
 export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => {
@@ -25,26 +37,28 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
                style={{ backgroundImage: 'radial-gradient(#ff69b4 1px, transparent 1px)', backgroundSize: '20px 20px' }}>
           </div>
 
-          {/* 装饰贴纸 - 增加更多款式 */}
+          {/* 装饰贴纸 1: 右上角探头 (使用可靠源) */}
           <HelloKittySticker 
             src="https://upload.wikimedia.org/wikipedia/en/thumb/0/05/Hello_kitty_character_portrait.png/220px-Hello_kitty_character_portrait.png" 
-            className="-top-4 -right-4 w-24 opacity-90 rotate-12"
+            className="-top-4 -right-4 w-24 opacity-90 rotate-12 z-20"
           />
-          <HelloKittySticker 
-            src="https://pngimg.com/uploads/hello_kitty/hello_kitty_PNG32.png" 
-            className="bottom-0 left-0 w-24 opacity-80 -rotate-12 transform scale-x-[-1]" 
-          />
-          {/* 增加一个中间的水印贴纸 */}
+
+          {/* 装饰贴纸 2: 左下角打电话的 Kitty (使用复合组件) */}
+          <div className="absolute -bottom-4 -left-6 w-36 rotate-6 z-20 pointer-events-none">
+             <PhoneKittySticker className="w-full" />
+          </div>
+          
+          {/* 装饰贴纸 3: 中间的 Logo/水印 (可靠源) */}
            <HelloKittySticker 
-            src="https://pngimg.com/uploads/hello_kitty/hello_kitty_PNG20.png" 
-            className="top-1/2 left-4 w-16 opacity-20 -rotate-6" 
+            src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Hello_Kitty_logo.svg/512px-Hello_Kitty_logo.svg.png" 
+            className="top-20 right-8 w-24 opacity-10 -rotate-12" 
           />
           
           {/* 内容区域 */}
           <div className="relative z-10 p-8 md:p-12 text-rose-900 max-h-[80vh] overflow-y-auto custom-scrollbar">
             <button 
               onClick={onClose}
-              className="absolute top-4 right-4 text-rose-300 hover:text-rose-500 transition-colors"
+              className="absolute top-4 right-4 text-rose-300 hover:text-rose-500 transition-colors z-50"
             >
               <X size={24} />
             </button>
@@ -52,14 +66,14 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
             <div className="font-romantic text-2xl md:text-3xl leading-relaxed space-y-6 text-center">
               <p className="font-bold text-rose-500 text-3xl mb-8 text-left pl-4">亲爱的乐丽欣：</p>
               
-              <div className="space-y-8 text-left text-lg md:text-xl font-medium text-slate-700 font-serif leading-loose">
+              <div className="space-y-8 text-left text-lg md:text-xl font-medium text-slate-700 font-serif leading-loose relative">
                 <p>
                   新年快乐。2026 年已经来了，我想给你写点什么。
                 </p>
                 <p>
                   你知道的，我其实不太会表达。我的生活看起来也很普通，吃喝玩乐，包括路过的风景也没什么特别的，其实我以前很少会去记录这些东西。总觉得没什么好说的，所以也不咋喜欢分享。
                 </p>
-                <p className="font-bold text-rose-600">
+                <p className="font-bold text-rose-600 bg-rose-100/50 inline-block px-2 rounded transform -rotate-1">
                    直到遇见老公。
                 </p>
                 <p>
@@ -74,19 +88,27 @@ export const LetterModal: React.FC<LetterModalProps> = ({ isOpen, onClose }) => 
                 <p>
                   我不完美，生活也常常无聊，但因为你，我愿意把一切都告诉你。开心的、疲惫的、平凡的，甚至不太好看的部分。我都想和你分享，也想听你的一切。
                 </p>
-                <p className="p-4 bg-white/50 rounded-2xl border border-rose-100 shadow-sm text-center font-romantic text-2xl text-rose-600 mt-8">
-                  “新的一年，希望咱们还能这样聊天、这样拥抱、这样慢慢走下去。希望宝宝健康、快乐，希望宝宝的愿望都能实现。”
-                </p>
+                
+                {/* 引用框样式优化 */}
+                <div className="relative mt-8 mb-8">
+                  <span className="absolute -top-4 -left-2 text-4xl text-rose-200">“</span>
+                  <p className="p-6 bg-white/60 rounded-2xl border-2 border-dashed border-rose-200 shadow-sm text-center font-romantic text-2xl text-rose-600">
+                    新的一年，希望咱们还能这样聊天、这样拥抱、这样慢慢走下去。<br/>
+                    <span className="text-lg mt-2 block text-rose-400">希望宝宝健康、快乐，希望宝宝的愿望都能实现。</span>
+                  </p>
+                  <span className="absolute -bottom-4 -right-2 text-4xl text-rose-200">”</span>
+                </div>
+
                 <p className="text-center">
                    我也会努力学会表达。爱爱你啊宝宝。还有宝宝给的情绪价值真的很高，我爱死你了，我要追随女神一辈子。
                 </p>
               </div>
             </div>
 
-            <div className="mt-12 text-center">
+            <div className="mt-12 text-center relative z-30">
                <button 
                  onClick={onClose}
-                 className="bg-rose-400 hover:bg-rose-500 text-white px-10 py-3 rounded-full font-bold shadow-lg shadow-rose-200 transition-all transform hover:scale-105 flex items-center gap-2 mx-auto"
+                 className="bg-rose-400 hover:bg-rose-500 text-white px-12 py-3 rounded-full font-bold shadow-lg shadow-rose-200 transition-all transform hover:scale-105 flex items-center gap-2 mx-auto"
                >
                  永远爱你 ❤
                </button>
